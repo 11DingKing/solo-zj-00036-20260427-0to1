@@ -13,23 +13,39 @@
       </div>
 
       <form @submit.prevent="handleLogin" class="space-y-6">
-        <UFormGroup label="邮箱" name="email">
-          <UInput v-model="state.email" type="email" placeholder="请输入邮箱" />
-        </UFormGroup>
-
-        <UFormGroup label="密码" name="password">
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            邮箱
+          </label>
           <UInput
+            id="email"
+            v-model="state.email"
+            type="email"
+            placeholder="请输入邮箱"
+          />
+        </div>
+
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            密码
+          </label>
+          <UInput
+            id="password"
             v-model="state.password"
             type="password"
             placeholder="请输入密码"
           />
-        </UFormGroup>
-
-        <div class="flex items-center justify-between">
-          <UButton type="submit" :loading="loading" class="w-full">
-            登录
-          </UButton>
         </div>
+
+        <UButton type="submit" :loading="loading" class="w-full">
+          登录
+        </UButton>
       </form>
 
       <div class="text-center">
@@ -60,7 +76,48 @@ const state = ref({
 const loading = ref(false);
 const toast = useToast();
 
+const validate = () => {
+  if (!state.value.email.trim()) {
+    toast.add({
+      title: "请输入邮箱",
+      color: "orange",
+    });
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(state.value.email)) {
+    toast.add({
+      title: "请输入有效的邮箱地址",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (!state.value.password) {
+    toast.add({
+      title: "请输入密码",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (state.value.password.length < 6) {
+    toast.add({
+      title: "密码至少6位",
+      color: "orange",
+    });
+    return false;
+  }
+
+  return true;
+};
+
 const handleLogin = async () => {
+  if (!validate()) {
+    return;
+  }
+
   loading.value = true;
   try {
     const authStore = useAuthStore();

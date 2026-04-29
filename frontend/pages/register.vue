@@ -13,29 +13,60 @@
       </div>
 
       <form @submit.prevent="handleRegister" class="space-y-6">
-        <UFormGroup label="姓名" name="name">
-          <UInput v-model="state.name" placeholder="请输入姓名" />
-        </UFormGroup>
+        <div>
+          <label
+            for="name"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            姓名
+          </label>
+          <UInput id="name" v-model="state.name" placeholder="请输入姓名" />
+        </div>
 
-        <UFormGroup label="邮箱" name="email">
-          <UInput v-model="state.email" type="email" placeholder="请输入邮箱" />
-        </UFormGroup>
-
-        <UFormGroup label="密码" name="password">
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            邮箱
+          </label>
           <UInput
+            id="email"
+            v-model="state.email"
+            type="email"
+            placeholder="请输入邮箱"
+          />
+        </div>
+
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            密码
+          </label>
+          <UInput
+            id="password"
             v-model="state.password"
             type="password"
             placeholder="请输入密码（至少6位）"
           />
-        </UFormGroup>
+        </div>
 
-        <UFormGroup label="确认密码" name="confirmPassword">
+        <div>
+          <label
+            for="confirmPassword"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            确认密码
+          </label>
           <UInput
+            id="confirmPassword"
             v-model="state.confirmPassword"
             type="password"
             placeholder="请再次输入密码"
           />
-        </UFormGroup>
+        </div>
 
         <UButton type="submit" :loading="loading" class="w-full">
           注册
@@ -72,7 +103,80 @@ const state = ref({
 const loading = ref(false);
 const toast = useToast();
 
+const validate = () => {
+  if (!state.value.name.trim()) {
+    toast.add({
+      title: "请输入姓名",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (state.value.name.trim().length < 2) {
+    toast.add({
+      title: "姓名至少2个字符",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (!state.value.email.trim()) {
+    toast.add({
+      title: "请输入邮箱",
+      color: "orange",
+    });
+    return false;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(state.value.email)) {
+    toast.add({
+      title: "请输入有效的邮箱地址",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (!state.value.password) {
+    toast.add({
+      title: "请输入密码",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (state.value.password.length < 6) {
+    toast.add({
+      title: "密码至少6位",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (!state.value.confirmPassword) {
+    toast.add({
+      title: "请确认密码",
+      color: "orange",
+    });
+    return false;
+  }
+
+  if (state.value.password !== state.value.confirmPassword) {
+    toast.add({
+      title: "两次输入的密码不一致",
+      color: "orange",
+    });
+    return false;
+  }
+
+  return true;
+};
+
 const handleRegister = async () => {
+  if (!validate()) {
+    return;
+  }
+
   loading.value = true;
   try {
     const authStore = useAuthStore();
