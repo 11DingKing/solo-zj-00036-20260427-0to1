@@ -932,24 +932,30 @@ const saveLogicRules = () => {
 const loadSurvey = async () => {
   try {
     const api = useApi();
-    survey.value = await api.surveys.get(surveyId.value);
-    surveyTitle.value = survey.value.title;
+    const result = await api.surveys.get(surveyId.value);
+
+    if (!result) {
+      throw new Error("问卷不存在");
+    }
+
+    survey.value = result;
+    surveyTitle.value = survey.value.title || "";
     questions.value = survey.value.questions || [];
     logicRules.value = survey.value.logic_rules || [];
 
     surveySettings.value = {
-      title: survey.value.title,
-      description: survey.value.description,
+      title: survey.value.title || "",
+      description: survey.value.description || "",
       start_time: survey.value.start_time || "",
       end_time: survey.value.end_time || "",
-      max_responses: survey.value.max_responses,
-      require_login: survey.value.require_login,
-      allow_duplicate: survey.value.allow_duplicate,
+      max_responses: survey.value.max_responses || 0,
+      require_login: survey.value.require_login || false,
+      allow_duplicate: survey.value.allow_duplicate || false,
     };
   } catch (error: any) {
     toast.add({
       title: "加载失败",
-      description: error.message,
+      description: error.message || "请检查网络连接",
       color: "red",
     });
   }

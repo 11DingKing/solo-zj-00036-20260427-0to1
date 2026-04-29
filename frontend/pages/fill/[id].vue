@@ -566,7 +566,13 @@ const handleSubmit = async () => {
 const loadSurvey = async () => {
   try {
     const api = useApi();
-    survey.value = await api.surveys.getForFill(surveyId.value);
+    const result = await api.surveys.getForFill(surveyId.value);
+    
+    if (!result) {
+      throw new Error("问卷不存在或已关闭");
+    }
+    
+    survey.value = result;
     questions.value = survey.value.questions || [];
     logicRules.value = survey.value.logic_rules || [];
 
@@ -580,9 +586,9 @@ const loadSurvey = async () => {
 
     visibleQuestions.value = [...questions.value];
 
-    const result = await api.responses.start(surveyId.value);
-    responseId.value = result.response_id;
-    startTime.value = new Date(result.start_time);
+    const responseResult = await api.responses.start(surveyId.value);
+    responseId.value = responseResult.response_id;
+    startTime.value = new Date(responseResult.start_time);
   } catch (error: any) {
     error.value = error.message || "问卷不存在或已关闭";
   } finally {

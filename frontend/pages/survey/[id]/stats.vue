@@ -657,7 +657,11 @@ const loadData = async () => {
   try {
     const api = useApi();
 
-    survey.value = await api.surveys.get(surveyId.value);
+    const surveyResult = await api.surveys.get(surveyId.value);
+    if (!surveyResult) {
+      throw new Error("问卷不存在");
+    }
+    survey.value = surveyResult;
     questions.value = survey.value.questions || [];
 
     surveyStats.value = await api.stats.getSurveyStats(surveyId.value);
@@ -665,7 +669,7 @@ const loadData = async () => {
   } catch (error: any) {
     toast.add({
       title: "加载失败",
-      description: error.message,
+      description: error.message || "请检查网络连接",
       color: "red",
     });
   } finally {
