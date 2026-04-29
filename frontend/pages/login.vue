@@ -12,7 +12,7 @@
         </p>
       </div>
 
-      <UForm v-model="state" :schema="schema" @submit="handleLogin">
+      <form @submit.prevent="handleLogin" class="space-y-6">
         <UFormGroup label="邮箱" name="email">
           <UInput v-model="state.email" type="email" placeholder="请输入邮箱" />
         </UFormGroup>
@@ -30,7 +30,7 @@
             登录
           </UButton>
         </div>
-      </UForm>
+      </form>
 
       <div class="text-center">
         <p class="text-gray-600 dark:text-gray-400">
@@ -51,20 +51,6 @@
 definePageMeta({
   middleware: false,
 });
-
-const schema = {
-  email: {
-    required: true,
-    pattern: {
-      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: "请输入有效的邮箱地址",
-    },
-  },
-  password: {
-    required: true,
-    minLength: 6,
-  },
-};
 
 const state = ref({
   email: "",

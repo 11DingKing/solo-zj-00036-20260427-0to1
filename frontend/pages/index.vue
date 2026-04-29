@@ -123,7 +123,7 @@
     </main>
 
     <UModal v-model="showCreateModal" :title="editingSurvey ? '编辑问卷' : '创建问卷'">
-      <UForm v-model="createForm" @submit="handleCreate">
+      <form @submit.prevent="handleCreate" class="space-y-4">
         <UFormGroup label="问卷标题" name="title">
           <UInput v-model="createForm.title" placeholder="请输入问卷标题" />
         </UFormGroup>
@@ -140,7 +140,7 @@
             {{ editingSurvey ? '保存' : '创建' }}
           </UButton>
         </div>
-      </UForm>
+      </form>
     </UModal>
 
     <UModal v-model="showDeleteModal">

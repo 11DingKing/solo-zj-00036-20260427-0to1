@@ -39,7 +39,7 @@ func (h *SurveyHandler) List(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
 
 	rows, err := database.DB.Query(context.Background(),
-		`SELECT id, user_id, title, description, status, start_time, end_time, 
+		`SELECT id, user_id, title, COALESCE(description, ''), status, start_time, end_time, 
 		        max_responses, require_login, allow_duplicate, created_at, updated_at
 		 FROM surveys 
 		 WHERE user_id = $1 
@@ -52,7 +52,7 @@ func (h *SurveyHandler) List(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	var surveys []*models.Survey
+	surveys := make([]*models.Survey, 0)
 	for rows.Next() {
 		var s models.Survey
 		err := rows.Scan(
@@ -81,9 +81,9 @@ func (h *SurveyHandler) Create(c *gin.Context) {
 
 	var survey models.Survey
 	err := database.DB.QueryRow(context.Background(),
-		`INSERT INTO surveys (user_id, title, status) 
-		 VALUES ($1, $2, $3)
-		 RETURNING id, user_id, title, description, status, start_time, end_time, 
+		`INSERT INTO surveys (user_id, title, description, status) 
+		 VALUES ($1, $2, '', $3)
+		 RETURNING id, user_id, title, COALESCE(description, ''), status, start_time, end_time, 
 		           max_responses, require_login, allow_duplicate, created_at, updated_at`,
 		userID, req.Title, models.SurveyStatusDraft,
 	).Scan(
@@ -110,7 +110,7 @@ func (h *SurveyHandler) Get(c *gin.Context) {
 
 	var survey models.Survey
 	err = database.DB.QueryRow(context.Background(),
-		`SELECT id, user_id, title, description, status, start_time, end_time, 
+		`SELECT id, user_id, title, COALESCE(description, ''), status, start_time, end_time, 
 		        max_responses, require_login, allow_duplicate, created_at, updated_at
 		 FROM surveys 
 		 WHERE id = $1 AND user_id = $2`,
@@ -159,7 +159,7 @@ func (h *SurveyHandler) GetForFill(c *gin.Context) {
 
 	var surveyData models.Survey
 	err = database.DB.QueryRow(context.Background(),
-		`SELECT id, user_id, title, description, status, start_time, end_time, 
+		`SELECT id, user_id, title, COALESCE(description, ''), status, start_time, end_time, 
 		        max_responses, require_login, allow_duplicate, created_at, updated_at
 		 FROM surveys 
 		 WHERE id = $1`,
@@ -246,7 +246,7 @@ func (h *SurveyHandler) Update(c *gin.Context) {
 			allow_duplicate = COALESCE($8, allow_duplicate),
 			updated_at = CURRENT_TIMESTAMP
 		 WHERE id = $9 AND user_id = $10
-		 RETURNING id, user_id, title, description, status, start_time, end_time, 
+		 RETURNING id, user_id, title, COALESCE(description, ''), status, start_time, end_time, 
 		           max_responses, require_login, allow_duplicate, created_at, updated_at`,
 		req.Title, req.Description, req.Status, req.StartTime, req.EndTime,
 		req.MaxResponses, req.RequireLogin, req.AllowDuplicate, surveyID, userID,

@@ -12,7 +12,7 @@
         </p>
       </div>
 
-      <UForm v-model="state" :schema="schema" @submit="handleRegister">
+      <form @submit.prevent="handleRegister" class="space-y-6">
         <UFormGroup label="姓名" name="name">
           <UInput v-model="state.name" placeholder="请输入姓名" />
         </UFormGroup>
@@ -40,7 +40,7 @@
         <UButton type="submit" :loading="loading" class="w-full">
           注册
         </UButton>
-      </UForm>
+      </form>
 
       <div class="text-center">
         <p class="text-gray-600 dark:text-gray-400">
@@ -61,31 +61,6 @@
 definePageMeta({
   middleware: false,
 });
-
-const schema = {
-  name: {
-    required: true,
-    minLength: 2,
-  },
-  email: {
-    required: true,
-    pattern: {
-      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      message: "请输入有效的邮箱地址",
-    },
-  },
-  password: {
-    required: true,
-    minLength: 6,
-  },
-  confirmPassword: {
-    required: true,
-    custom: {
-      isValid: (value: string) => value === state.value.password,
-      message: "两次输入的密码不一致",
-    },
-  },
-};
 
 const state = ref({
   name: "",
