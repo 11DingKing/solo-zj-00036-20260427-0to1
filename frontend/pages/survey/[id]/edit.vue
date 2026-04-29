@@ -21,13 +21,15 @@
             />
           </div>
           <div class="flex items-center space-x-4">
-            <UButton variant="outline" @click="saveSurvey"> 保存 </UButton>
+            <UButton variant="outline" @click="saveSurvey" :loading="saving">
+              保存
+            </UButton>
             <UButton variant="outline" @click="showSettingsModal = true">
               设置
             </UButton>
             <UButton @click="previewSurvey"> 预览 </UButton>
             <UButton
-              v-if="survey.status === 'draft'"
+              v-if="survey?.status === 'draft'"
               color="green"
               @click="publishSurvey"
             >
@@ -389,7 +391,7 @@
     </div>
 
     <UModal v-model="showSettingsModal" title="问卷设置">
-      <div class="space-y-4">
+      <div class="space-y-4 p-6">
         <UFormGroup label="问卷标题">
           <UInput v-model="surveySettings.title" />
         </UFormGroup>
@@ -445,7 +447,7 @@
     </UModal>
 
     <UModal v-model="showLogicModal" title="逻辑跳转规则配置">
-      <div class="space-y-4">
+      <div class="space-y-4 p-6">
         <div v-if="logicRules.length > 0" class="space-y-3">
           <div
             v-for="(rule, index) in logicRules"
@@ -793,11 +795,26 @@ const saveSurvey = async () => {
   }
 };
 
-const previewSurvey = () => {
-  toast.add({
-    title: "预览功能开发中",
-    color: "orange",
-  });
+const previewSurvey = async () => {
+  if (questions.value.length === 0) {
+    toast.add({
+      title: "请先添加题目",
+      description: "问卷至少需要一道题目才能预览",
+      color: "orange",
+    });
+    return;
+  }
+
+  try {
+    await saveSurvey();
+    window.open(`/fill/${surveyId.value}`, "_blank");
+  } catch (error: any) {
+    toast.add({
+      title: "预览失败",
+      description: error.message || "请先保存问卷",
+      color: "red",
+    });
+  }
 };
 
 const publishSurvey = async () => {
