@@ -65,11 +65,13 @@ type Option struct {
 type MatrixRow struct {
 	ID    string `json:"id"`
 	Label string `json:"label"`
+	Value string `json:"value"`
 }
 
 type MatrixCol struct {
 	ID    string `json:"id"`
 	Label string `json:"label"`
+	Value string `json:"value"`
 }
 
 type Question struct {

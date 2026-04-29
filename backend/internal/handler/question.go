@@ -49,7 +49,7 @@ type UpdateQuestionRequest struct {
 
 func (h *QuestionHandler) Create(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -124,7 +124,7 @@ func (h *QuestionHandler) Create(c *gin.Context) {
 
 func (h *QuestionHandler) Update(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	questionID, err := uuid.Parse(c.Param("id"))
+	questionID, err := uuid.Parse(c.Param("question_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid question id"})
 		return
@@ -198,7 +198,7 @@ func (h *QuestionHandler) Update(c *gin.Context) {
 
 func (h *QuestionHandler) UpdateOrder(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -254,7 +254,7 @@ func (h *QuestionHandler) UpdateOrder(c *gin.Context) {
 
 func (h *QuestionHandler) Delete(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	questionID, err := uuid.Parse(c.Param("id"))
+	questionID, err := uuid.Parse(c.Param("question_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid question id"})
 		return

@@ -95,7 +95,7 @@
                 >
                   <input
                     type="radio"
-                    :name="`q_${currentQuestion!.id}"
+                    :name="`q_${currentQuestion!.id}`"
                     :value="option.value"
                     v-model="answers[currentQuestion!.id]"
                     class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
@@ -115,9 +115,9 @@
                   :key="option.value"
                   :class="[
                     'flex items-center p-3 rounded-lg border cursor-pointer transition-colors',
-                    (getMultipleAnswers(currentQuestion!.id).includes(option.value)
+                    getMultipleAnswers(currentQuestion!.id).includes(option.value)
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-700'
+                      : 'border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-700',
                   ]"
                   @click="toggleMultipleOption(option.value)"
                 >
@@ -176,7 +176,7 @@
               >
                 <div class="flex justify-between items-center px-2">
                   <button
-                    v-for="n in (currentQuestion.max_rating - currentQuestion.min_rating + 1"
+                    v-for="n in (currentQuestion.max_rating - currentQuestion.min_rating + 1)"
                     :key="n"
                     :value="currentQuestion.min_rating + n - 1"
                     @click="selectRating(currentQuestion!.min_rating + n - 1)"
@@ -486,7 +486,7 @@ const goNext = () => {
 
   calculateVisibleQuestions();
 
-  if (currentQuestionIndex.value < visibleQuestions.value - 1) {
+  if (currentQuestionIndex.value < visibleQuestions.value.length - 1) {
     currentQuestionIndex.value++;
   }
 };

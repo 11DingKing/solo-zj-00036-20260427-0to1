@@ -27,7 +27,7 @@ type CreateLogicRuleRequest struct {
 
 func (h *LogicHandler) List(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -54,7 +54,7 @@ func (h *LogicHandler) List(c *gin.Context) {
 
 func (h *LogicHandler) Create(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -110,7 +110,7 @@ func (h *LogicHandler) Create(c *gin.Context) {
 
 func (h *LogicHandler) Delete(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	ruleID, err := uuid.Parse(c.Param("id"))
+	ruleID, err := uuid.Parse(c.Param("logic_id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid rule id"})
 		return
@@ -148,7 +148,7 @@ func (h *LogicHandler) Delete(c *gin.Context) {
 
 func (h *LogicHandler) UpdateOrder(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return

@@ -143,14 +143,18 @@
       </UForm>
     </UModal>
 
-    <UConfirmModal
-      v-model="showDeleteModal"
-      :title="`删除问卷`"
-      :description="`确定要删除问卷 \"${deletingSurvey?.title}\" 吗？此操作不可撤销。`"
-      :confirm-label="'删除'"
-      confirm-color="red"
-      @confirm="handleDelete"
-    />
+    <UModal v-model="showDeleteModal">
+      <div class="p-6">
+        <h3 class="text-lg font-semibold mb-4">删除问卷</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          确定要删除问卷 "{{ deletingSurvey?.title }}" 吗？此操作不可撤销。
+        </p>
+        <div class="flex justify-end gap-3">
+          <UButton variant="outline" @click="showDeleteModal = false">取消</UButton>
+          <UButton color="red" @click="handleDelete">删除</UButton>
+        </div>
+      </div>
+    </UModal>
   </div>
 </template>
 

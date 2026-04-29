@@ -26,7 +26,7 @@ func NewStatsHandler() *StatsHandler {
 
 func (h *StatsHandler) GetSurveyStats(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -85,7 +85,7 @@ func (h *StatsHandler) GetSurveyStats(c *gin.Context) {
 
 func (h *StatsHandler) GetQuestionStats(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -399,7 +399,7 @@ func calculateQuestionStats(q *models.Question, surveyID uuid.UUID) (*models.Que
 
 func (h *StatsHandler) CrosstabAnalysis(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -530,7 +530,7 @@ func (h *StatsHandler) CrosstabAnalysis(c *gin.Context) {
 
 func (h *StatsHandler) ExportCSV(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return
@@ -651,7 +651,7 @@ func (h *StatsHandler) ExportCSV(c *gin.Context) {
 
 func (h *StatsHandler) ExportExcel(c *gin.Context) {
 	userID := c.MustGet("user_id").(uuid.UUID)
-	surveyID, err := uuid.Parse(c.Param("survey_id"))
+	surveyID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid survey id"})
 		return

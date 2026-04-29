@@ -1,6 +1,6 @@
 module survey-platform
 
-go 1.21
+go 1.24
 
 require (
 	github.com/gin-contrib/cors v1.5.0
@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.5.0
 	github.com/jackc/pgx/v5 v5.5.2
 	github.com/joho/godotenv v1.5.1
+	github.com/redis/go-redis/v9 v9.5.1
 	github.com/xuri/excelize/v2 v2.8.0
 	golang.org/x/crypto v0.18.0
 )
