@@ -554,6 +554,7 @@ const logicRules = ref<LogicRule[]>([]);
 
 const showSettingsModal = ref(false);
 const showLogicModal = ref(false);
+const saving = ref(false);
 
 const surveySettings = ref({
   title: "",
@@ -721,10 +722,75 @@ const updateTitle = () => {
 };
 
 const saveSurvey = async () => {
-  toast.add({
-    title: "已保存",
-    color: "green",
-  });
+  saving.value = true;
+  try {
+    const api = useApi();
+
+    const idMap: Record<string, string> = {};
+
+    for (const question of questions.value) {
+      if (question.id.startsWith("temp_")) {
+        const created = await api.questions.create(surveyId.value, {
+          question_type: question.question_type,
+          title: question.title,
+          description: question.description,
+          is_required: question.is_required,
+          shuffle_options: question.shuffle_options,
+          question_order: question.question_order,
+          options: question.options,
+          matrix_rows: question.matrix_rows,
+          matrix_cols: question.matrix_cols,
+          min_rating: question.min_rating,
+          max_rating: question.max_rating,
+        });
+        idMap[question.id] = created.id;
+        question.id = created.id;
+      } else {
+        await api.questions.update(question.id, {
+          question_type: question.question_type,
+          title: question.title,
+          description: question.description,
+          is_required: question.is_required,
+          shuffle_options: question.shuffle_options,
+          question_order: question.question_order,
+          options: question.options,
+          matrix_rows: question.matrix_rows,
+          matrix_cols: question.matrix_cols,
+          min_rating: question.min_rating,
+          max_rating: question.max_rating,
+        });
+      }
+    }
+
+    const orderUpdates = questions.value.map((q) => ({
+      question_id: q.id,
+      question_order: q.question_order,
+    }));
+
+    if (orderUpdates.length > 0) {
+      await api.questions.updateOrder(surveyId.value, orderUpdates);
+    }
+
+    if (survey.value) {
+      survey.value.title = surveyTitle.value;
+      await api.surveys.update(surveyId.value, {
+        title: surveyTitle.value,
+      });
+    }
+
+    toast.add({
+      title: "已保存",
+      color: "green",
+    });
+  } catch (error: any) {
+    toast.add({
+      title: "保存失败",
+      description: error.message,
+      color: "red",
+    });
+  } finally {
+    saving.value = false;
+  }
 };
 
 const previewSurvey = () => {

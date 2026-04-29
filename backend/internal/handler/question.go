@@ -21,10 +21,11 @@ func NewQuestionHandler() *QuestionHandler {
 
 type CreateQuestionRequest struct {
 	QuestionType   string             `json:"question_type" binding:"required"`
-	Title          string             `json:"title" binding:"required"`
+	Title          string             `json:"title"`
 	Description    string             `json:"description"`
 	IsRequired     bool               `json:"is_required"`
 	ShuffleOptions bool               `json:"shuffle_options"`
+	QuestionOrder  int                `json:"question_order"`
 	Options        []*models.Option   `json:"options"`
 	MatrixRows     []*models.MatrixRow `json:"matrix_rows"`
 	MatrixCols     []*models.MatrixCol `json:"matrix_cols"`
@@ -70,12 +71,17 @@ func (h *QuestionHandler) Create(c *gin.Context) {
 		return
 	}
 
-	var maxOrder int
-	database.DB.QueryRow(context.Background(),
-		"SELECT COALESCE(MAX(question_order), 0) FROM questions WHERE survey_id = $1",
-		surveyID,
-	).Scan(&maxOrder)
-	newOrder := maxOrder + 1
+	var newOrder int
+	if req.QuestionOrder > 0 {
+		newOrder = req.QuestionOrder
+	} else {
+		var maxOrder int
+		database.DB.QueryRow(context.Background(),
+			"SELECT COALESCE(MAX(question_order), 0) FROM questions WHERE survey_id = $1",
+			surveyID,
+		).Scan(&maxOrder)
+		newOrder = maxOrder + 1
+	}
 
 	optionsJSON, _ := json.Marshal(req.Options)
 	matrixRowsJSON, _ := json.Marshal(req.MatrixRows)
